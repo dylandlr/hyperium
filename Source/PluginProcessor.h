@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 #include "Parameters.h"
+#include "dsp/WavetableOscillator.h"
 
 class HyperiumAudioProcessor final : public juce::AudioProcessor
 {
@@ -45,9 +46,11 @@ private:
     float renderPlaceholderVoice();
 
     double currentSampleRate { 44100.0 };
-    double phase { 0.0 };
     int activeMidiNote { -1 };
     float activeVelocity { 0.0f };
+
+    hyperium::dsp::WavetableOscillator oscA;
+    hyperium::dsp::WavetableOscillator oscB;
 
     juce::SmoothedValue<float> smoothedOutput;
 
