@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hyperium UI Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="plugin-shell" aria-label="Hyperium static UI prototype">
+    <header class="header-bar">
+      <div>
+        <p class="eyebrow">minimal wavetable synth</p>
+        <h1>HYPERIUM</h1>
+      </div>
+      <button class="preset-button" id="presetButton">pink glass lead</button>
+      <nav class="header-actions" aria-label="Header actions">
+        <button>Save</button>
+        <button>Menu</button>
+      </nav>
+    </header>
+
+    <section class="seed-strip panel" aria-label="Sound seed controls">
+      <div>
+        <p class="eyebrow">sound seed</p>
+        <h2 id="seedTitle">glassy · hard · glitchy · digital</h2>
+      </div>
+      <div class="seed-buttons" role="list" aria-label="Seed moods">
+        <button class="active" data-seed="glassy">glassy</button>
+        <button data-seed="cute">cute</button>
+        <button data-seed="dreamy">dreamy</button>
+        <button data-seed="crushed">crushed</button>
+        <button data-seed="vocal">vocal</button>
+      </div>
+      <button class="generate-button" id="generateButton">Generate</button>
+    </section>
+
+    <section class="morph-section">
+      <div class="panel morph-panel">
+        <div class="section-heading">
+          <span>macro morph</span>
+          <strong id="morphLabel">center</strong>
+        </div>
+        <div class="morph-pad" id="morphPad" role="slider" aria-label="Morph pad" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+          <span class="corner top">dream</span>
+          <span class="corner left">soft</span>
+          <span class="corner right">crush</span>
+          <span class="corner bottom">glitch</span>
+          <div class="cross horizontal"></div>
+          <div class="cross vertical"></div>
+          <div class="morph-dot" id="morphDot"></div>
+        </div>
+      </div>
+
+      <div class="panel macro-summary">
+        <div class="section-heading">
+          <span>active movement</span>
+          <strong id="movementName">Glitch → Wave Position</strong>
+        </div>
+        <div class="motion-wave" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p>Motion should feel like a musical gesture, not a hidden modulation matrix.</p>
+      </div>
+    </section>
+
+    <section class="main-grid" aria-label="Main sound controls">
+      <article class="panel module oscillator">
+        <div class="section-heading">
+          <span>osc a</span>
+          <strong>glass table</strong>
+        </div>
+        <div class="waveform" aria-hidden="true"><canvas id="waveA" width="320" height="88"></canvas></div>
+        <div class="control-row">
+          <label>Position <input type="range" min="0" max="100" value="62" /></label>
+          <label>Warp <input type="range" min="0" max="100" value="34" /></label>
+          <label>Level <input type="range" min="0" max="100" value="82" /></label>
+        </div>
+      </article>
+
+      <article class="panel module oscillator">
+        <div class="section-heading">
+          <span>osc b</span>
+          <strong>vocal chrome</strong>
+        </div>
+        <div class="waveform" aria-hidden="true"><canvas id="waveB" width="320" height="88"></canvas></div>
+        <div class="control-row">
+          <label>Position <input type="range" min="0" max="100" value="41" /></label>
+          <label>Warp <input type="range" min="0" max="100" value="57" /></label>
+          <label>Level <input type="range" min="0" max="100" value="48" /></label>
+        </div>
+      </article>
+
+      <article class="panel module texture">
+        <div class="section-heading">
+          <span>texture</span>
+          <strong id="textureType">glass</strong>
+        </div>
+        <div class="texture-field" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="control-row">
+          <label>Amount <input type="range" min="0" max="100" value="35" /></label>
+          <label>Tone <input type="range" min="0" max="100" value="72" /></label>
+          <label>Stereo <input type="range" min="0" max="100" value="64" /></label>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel filter-shape" aria-label="Filter and shape controls">
+      <div class="section-heading">
+        <span>filter / shape</span>
+        <strong>hyper lp · mirror fold</strong>
+      </div>
+      <div class="wide-controls">
+        <label>Cutoff <input type="range" min="0" max="100" value="68" /></label>
+        <label>Res <input type="range" min="0" max="100" value="19" /></label>
+        <label>Drive <input type="range" min="0" max="100" value="31" /></label>
+        <label>Shape <input type="range" min="0" max="100" value="46" /></label>
+      </div>
+    </section>
+
+    <section class="panel motion-panel" aria-label="Motion controls">
+      <div class="section-heading">
+        <span>motion</span>
+        <strong>one movement layer</strong>
+      </div>
+      <div class="motion-buttons" role="list" aria-label="Motion types">
+        <button>Pulse</button>
+        <button>Drift</button>
+        <button class="active">Glitch</button>
+        <button>Bloom</button>
+        <button>Orbit</button>
+      </div>
+      <div class="wide-controls">
+        <label>Amount <input type="range" min="0" max="100" value="28" /></label>
+        <label>Rate <input type="range" min="0" max="100" value="64" /></label>
+        <label>Humanize <input type="range" min="0" max="100" value="22" /></label>
+      </div>
+    </section>
+
+    <section class="panel fx-strip" aria-label="Effects strip">
+      <div class="section-heading">
+        <span>fx</span>
+        <strong>curated chain</strong>
+      </div>
+      <button class="fx active">Pitch</button>
+      <button class="fx active">Crush</button>
+      <button class="fx active">Drive</button>
+      <button class="fx">Chorus</button>
+      <button class="fx active">Space</button>
+      <button class="fx active">Comp</button>
+    </section>
+
+    <section class="macro-bar" aria-label="Performance macros">
+      <button class="macro" data-value="78"><span>Bright</span><strong>78</strong></button>
+      <button class="macro" data-value="64"><span>Wide</span><strong>64</strong></button>
+      <button class="macro" data-value="39"><span>Crush</span><strong>39</strong></button>
+      <button class="macro" data-value="71"><span>Glow</span><strong>71</strong></button>
+      <button class="macro" data-value="22"><span>Drift</span><strong>22</strong></button>
+      <button class="macro" data-value="58"><span>Punch</span><strong>58</strong></button>
+      <button class="macro" data-value="33"><span>Glitch</span><strong>33</strong></button>
+      <button class="macro" data-value="46"><span>Human</span><strong>46</strong></button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
