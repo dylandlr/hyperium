@@ -4,14 +4,12 @@ namespace
 {
     juce::Colour bgDeep() { return juce::Colour::fromString("ff07070d"); }
     juce::Colour panel() { return juce::Colour::fromString("dd11111c"); }
-    juce::Colour panelSoft() { return juce::Colour::fromString("dd171725"); }
     juce::Colour textPrimary() { return juce::Colour::fromString("fff4f1ff"); }
     juce::Colour textSecondary() { return juce::Colour::fromString("ffa7a2be"); }
     juce::Colour textMuted() { return juce::Colour::fromString("ff6e6985"); }
     juce::Colour violet() { return juce::Colour::fromString("ff9b5cff"); }
     juce::Colour cyan() { return juce::Colour::fromString("ff56d8ff"); }
     juce::Colour pink() { return juce::Colour::fromString("ffff7dcd"); }
-    juce::Colour orange() { return juce::Colour::fromString("ffff9a5c"); }
 
     void styleButton(juce::TextButton& button, bool active = false)
     {
@@ -26,6 +24,29 @@ namespace
         label.setColour(juce::Label::textColourId, colour);
         label.setFont(juce::FontOptions { height, bold ? juce::Font::bold : juce::Font::plain });
         label.setInterceptsMouseClicks(false, false);
+    }
+
+    hyperium::SeedMood moodFromText(const juce::String& text)
+    {
+        if (text == "cute") return hyperium::SeedMood::cute;
+        if (text == "dreamy") return hyperium::SeedMood::dreamy;
+        if (text == "crushed") return hyperium::SeedMood::crushed;
+        if (text == "vocal") return hyperium::SeedMood::vocal;
+        return hyperium::SeedMood::glassy;
+    }
+
+    juce::String textFromMood(hyperium::SeedMood mood)
+    {
+        switch (mood)
+        {
+            case hyperium::SeedMood::cute: return "cute";
+            case hyperium::SeedMood::dreamy: return "dreamy";
+            case hyperium::SeedMood::crushed: return "crushed";
+            case hyperium::SeedMood::vocal: return "vocal";
+            case hyperium::SeedMood::glassy: return "glassy";
+        }
+
+        return "glassy";
     }
 }
 
@@ -52,6 +73,12 @@ HyperiumAudioProcessorEditor::HyperiumAudioProcessorEditor(HyperiumAudioProcesso
     addAndMakeVisible(saveButton);
     addAndMakeVisible(menuButton);
     addAndMakeVisible(generateButton);
+
+    generateButton.onClick = [this]
+    {
+        const auto randomMood = static_cast<hyperium::SeedMood>(juce::Random::getSystemRandom().nextInt(5));
+        applySoundSeed(randomMood);
+    };
 
     styleLabel(seedTitle, 18.0f, textPrimary(), true);
     seedTitle.setText("glassy · hard · glitchy · digital", juce::dontSendNotification);
@@ -107,6 +134,8 @@ HyperiumAudioProcessorEditor::HyperiumAudioProcessorEditor(HyperiumAudioProcesso
     addSlider("Punch", hyperium::ParameterID::macroPunch, juce::Slider::RotaryHorizontalVerticalDrag);
     addSlider("Glitch", hyperium::ParameterID::macroGlitch, juce::Slider::RotaryHorizontalVerticalDrag);
     addSlider("Human", hyperium::ParameterID::macroHuman, juce::Slider::RotaryHorizontalVerticalDrag);
+
+    applySoundSeed(hyperium::SeedMood::glassy);
 }
 
 HyperiumAudioProcessorEditor::BoundSlider& HyperiumAudioProcessorEditor::addSlider(
@@ -143,20 +172,48 @@ void HyperiumAudioProcessorEditor::addSeedButton(const juce::String& text)
     styleButton(*button, text == "glassy");
     button->onClick = [this, text]
     {
-        for (auto& seedButton : seedButtons)
-            styleButton(*seedButton, seedButton->getButtonText() == text);
-
-        presetButton.setButtonText(text == "cute" ? "candy pixel pluck"
-            : text == "dreamy" ? "bedroom shimmer pad"
-            : text == "crushed" ? "crushed candy bass"
-            : text == "vocal" ? "plastic vocal arp"
-            : "pink glass lead");
-
-        seedTitle.setText(text + " · generated workflow seed", juce::dontSendNotification);
+        applySoundSeed(moodFromText(text));
     };
 
     addAndMakeVisible(*button);
     seedButtons.push_back(std::move(button));
+}
+
+void HyperiumAudioProcessorEditor::applySoundSeed(hyperium::SeedMood mood)
+{
+    const auto energy = mood == hyperium::SeedMood::crushed ? hyperium::SeedEnergy::hard
+        : mood == hyperium::SeedMood::dreamy ? hyperium::SeedEnergy::soft
+        : hyperium::SeedEnergy::medium;
+
+    const auto motion = mood == hyperium::SeedMood::crushed ? hyperium::SeedMotion::glitchy
+        : mood == hyperium::SeedMood::dreamy ? hyperium::SeedMotion::blooming
+        : mood == hyperium::SeedMood::vocal ? hyperium::SeedMotion::pulsing
+        : hyperium::SeedMotion::glitchy;
+
+    const auto texture = mood == hyperium::SeedMood::dreamy ? hyperium::SeedTexture::tape
+        : mood == hyperium::SeedMood::vocal ? hyperium::SeedTexture::breath
+        : mood == hyperium::SeedMood::cute ? hyperium::SeedTexture::airy
+        : hyperium::SeedTexture::digital;
+
+    const auto seed = hyperium::SoundSeedEngine::generate(mood, energy, motion, texture);
+
+    for (const auto& assignment : seed.assignments)
+    {
+        if (auto* parameter = audioProcessor.parameters.getParameter(assignment.parameterId))
+        {
+            parameter->beginChangeGesture();
+            parameter->setValueNotifyingHost(assignment.normalizedValue);
+            parameter->endChangeGesture();
+        }
+    }
+
+    const auto selectedText = textFromMood(mood);
+    for (auto& seedButton : seedButtons)
+        styleButton(*seedButton, seedButton->getButtonText() == selectedText);
+
+    presetButton.setButtonText(seed.presetName);
+    seedTitle.setText(seed.description, juce::dontSendNotification);
+    repaint();
 }
 
 void HyperiumAudioProcessorEditor::addMotionButton(const juce::String& text)
