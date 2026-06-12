@@ -13,7 +13,8 @@ void HyperiumAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     juce::ignoreUnused(samplesPerBlock);
 
     currentSampleRate = sampleRate;
-    phase = 0.0;
+    oscA.prepare(sampleRate);
+    oscB.prepare(sampleRate);
 
     smoothedOutput.reset(sampleRate, 0.02);
     smoothedOutput.setCurrentAndTargetValue(0.0f);
@@ -91,29 +92,25 @@ float HyperiumAudioProcessor::renderPlaceholderVoice()
     if (activeMidiNote < 0)
         return 0.0f;
 
-    const auto frequency = juce::MidiMessage::getMidiNoteInHertz(activeMidiNote);
+    const auto baseFrequency = juce::MidiMessage::getMidiNoteInHertz(activeMidiNote);
     const auto oscAPosition = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscAPosition);
     const auto oscAWarp = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscAWarp);
+    const auto oscALevel = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscALevel);
+
     const auto oscBPosition = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscBPosition);
     const auto oscBWarp = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscBWarp);
+    const auto oscBLevel = hyperium::getParameterValue(parameters, hyperium::ParameterID::oscBLevel);
+
     const auto drift = hyperium::getParameterValue(parameters, hyperium::ParameterID::macroDrift);
+    const auto wide = hyperium::getParameterValue(parameters, hyperium::ParameterID::macroWide);
 
-    const auto phaseIncrement = frequency / currentSampleRate;
-    phase += phaseIncrement * (1.0 + drift * 0.002);
+    oscA.setFrequency(baseFrequency * (1.0f + drift * 0.0015f));
+    oscB.setFrequency(baseFrequency * (1.0f + wide * 0.006f + drift * 0.0025f));
 
-    if (phase >= 1.0)
-        phase -= 1.0;
+    const auto a = oscA.process(oscAPosition, oscAWarp) * oscALevel;
+    const auto b = oscB.process(oscBPosition, oscBWarp) * oscBLevel;
 
-    const auto angle = static_cast<float>(juce::MathConstants<double>::twoPi * phase);
-
-    const auto oscA = std::sin(angle)
-        + std::sin(angle * (2.0f + oscAPosition * 6.0f)) * 0.18f
-        + std::sin(angle * (5.0f + oscAWarp * 11.0f)) * 0.08f;
-
-    const auto oscB = std::sin(angle * (1.005f + oscBPosition * 0.012f)) * 0.55f
-        + std::sin(angle * (3.0f + oscBWarp * 7.0f)) * 0.11f;
-
-    return static_cast<float>((oscA + oscB) * 0.5f);
+    return (a + b * 0.72f) * 0.58f;
 }
 
 juce::AudioProcessorEditor* HyperiumAudioProcessor::createEditor()
