@@ -80,6 +80,41 @@ Open it in a browser to test the current interaction direction:
 
 This prototype is intentionally non-audio. Its job is to validate workflow and visual hierarchy before the JUCE/DSP implementation gets heavy.
 
+## JUCE Plugin Skeleton
+
+The repo now includes an initial JUCE/CMake plugin skeleton:
+
+```text
+CMakeLists.txt
+Source/
+├── Parameters.h
+├── Parameters.cpp
+├── PluginProcessor.h
+├── PluginProcessor.cpp
+├── PluginEditor.h
+└── PluginEditor.cpp
+```
+
+The current C++ layer includes:
+
+- stable parameter IDs
+- `AudioProcessorValueTreeState` setup
+- state save/restore
+- placeholder MIDI/audio voice
+- UI-first `PluginEditor` layout based on the prototype
+- macro, oscillator, texture, filter, and motion controls connected to parameters
+
+## Build
+
+From the repository root:
+
+```bash
+cmake -S . -B build
+cmake --build build --config Release
+```
+
+See [`docs/BUILD.md`](docs/BUILD.md) for more detail.
+
 ## Core MVP
 
 The first real version should focus on a small but powerful feature set:
@@ -135,12 +170,22 @@ Hyperium should primarily live on one screen:
 
 ```text
 hyperium/
+├── CMakeLists.txt
 ├── README.md
+├── Source/
+│   ├── Parameters.h
+│   ├── Parameters.cpp
+│   ├── PluginProcessor.h
+│   ├── PluginProcessor.cpp
+│   ├── PluginEditor.h
+│   └── PluginEditor.cpp
 ├── docs/
+│   ├── BUILD.md
 │   ├── PRODUCT_SPEC.md
 │   ├── UI_UX_SPEC.md
 │   ├── DESIGN_SYSTEM.md
 │   ├── INTERACTION_FLOWS.md
+│   ├── PARAMETERS.md
 │   ├── ARCHITECTURE.md
 │   ├── ROADMAP.md
 │   └── MVP_BACKLOG.md
@@ -153,9 +198,9 @@ hyperium/
 
 ## Current Status
 
-This repository currently contains the product foundation, UI/UX specification, design system, interaction flows, MVP backlog, architecture plan, roadmap, and a static UI prototype.
+This repository currently contains the product foundation, UI/UX specification, design system, interaction flows, MVP backlog, architecture plan, roadmap, static UI prototype, and first JUCE plugin skeleton.
 
-The next step is to convert the prototype into a JUCE plugin shell and begin connecting parameters to placeholder DSP.
+The next step is to refine the JUCE UI into reusable components, then replace the placeholder audio path with a proper wavetable voice engine.
 
 ## Guiding Rule
 
