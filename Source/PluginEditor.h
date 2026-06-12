@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
+#include "SoundSeed.h"
 
 class HyperiumAudioProcessorEditor final : public juce::AudioProcessorEditor
 {
@@ -28,6 +29,7 @@ private:
     void addSeedButton(const juce::String& text);
     void addMotionButton(const juce::String& text);
     void addFxButton(const juce::String& text, bool active);
+    void applySoundSeed(hyperium::SeedMood mood);
 
     void drawPanel(juce::Graphics& g, juce::Rectangle<int> bounds, const juce::String& title, const juce::String& subtitle) const;
     void drawWavePreview(juce::Graphics& g, juce::Rectangle<int> bounds, float variant) const;
