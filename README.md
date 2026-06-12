@@ -59,6 +59,27 @@ Instead of exposing only technical controls, Hyperium should use musical control
 
 The math and DSP can be complex, but the workflow should remain intuitive.
 
+## Prototype
+
+A static UI prototype lives in:
+
+```text
+prototype/index.html
+```
+
+Open it in a browser to test the current interaction direction:
+
+- Sound Seed buttons
+- draggable Morph Pad
+- keyboard-accessible Morph Pad
+- Motion selector
+- waveform visual previews
+- Texture visualization
+- FX strip
+- Performance Macro bar
+
+This prototype is intentionally non-audio. Its job is to validate workflow and visual hierarchy before the JUCE/DSP implementation gets heavy.
+
 ## Core MVP
 
 The first real version should focus on a small but powerful feature set:
@@ -118,14 +139,23 @@ hyperium/
 ├── docs/
 │   ├── PRODUCT_SPEC.md
 │   ├── UI_UX_SPEC.md
+│   ├── DESIGN_SYSTEM.md
+│   ├── INTERACTION_FLOWS.md
 │   ├── ARCHITECTURE.md
-│   └── ROADMAP.md
+│   ├── ROADMAP.md
+│   └── MVP_BACKLOG.md
+├── prototype/
+│   ├── index.html
+│   ├── styles.css
+│   └── app.js
 └── .gitignore
 ```
 
 ## Current Status
 
-This repository currently contains the planning foundation for Hyperium. The next step is to create the initial JUCE project structure and begin implementing the UI-first prototype.
+This repository currently contains the product foundation, UI/UX specification, design system, interaction flows, MVP backlog, architecture plan, roadmap, and a static UI prototype.
+
+The next step is to convert the prototype into a JUCE plugin shell and begin connecting parameters to placeholder DSP.
 
 ## Guiding Rule
 
