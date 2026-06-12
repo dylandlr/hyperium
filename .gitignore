@@ -1,0 +1,36 @@
+# Build outputs
+build/
+Builds/
+cmake-build-*/
+out/
+dist/
+
+# JUCE / plugin artifacts
+*.jucer.user
+*.vst3
+*.component
+*.aaxplugin
+*.dll
+*.exe
+*.app
+*.dSYM
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.user
+*.vcxproj.user
+*.xcodeproj/project.xcworkspace/
+*.xcuserdata/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dependencies / generated
+node_modules/
+.cache/
