@@ -38,6 +38,7 @@ target_sources(Hyperium
         Source/PluginProcessor.cpp
         Source/PluginEditor.cpp
         Source/Parameters.cpp
+        Source/SoundSeed.cpp
 )
 
 target_include_directories(Hyperium
